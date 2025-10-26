@@ -15,7 +15,9 @@ class StorageSqlite(Storage):
         payload = json.dumps(update, ensure_ascii=False, indent=2)
         with sqlite3.connect(os.getenv("SQLITE_DATABASE_PATH")) as connection:
             with connection:
-                connection.execute("INSERT INTO telegram_events (payload) VALUES (?)", (payload,))
+                connection.execute(
+                    "INSERT INTO telegram_events (payload) VALUES (?)", (payload,)
+                )
 
     def update_user_data(self, telegram_id: int, data: dict) -> None:
         with sqlite3.connect(os.getenv("SQLITE_DATABASE_PATH")) as connection:
@@ -26,7 +28,7 @@ class StorageSqlite(Storage):
                 )
 
     def recreate_database(self) -> None:
-        with sqlite3.connect(os.getenv('SQLITE_DATABASE_PATH')) as connection:
+        with sqlite3.connect(os.getenv("SQLITE_DATABASE_PATH")) as connection:
             with connection:
                 connection.execute("DROP TABLE IF EXISTS telegram_events")
                 connection.execute("DROP TABLE IF EXISTS users")
@@ -54,20 +56,22 @@ class StorageSqlite(Storage):
 
     def get_user(self, telegram_id: int) -> dict | None:
         """Get complete user object from the users table by telegram_id.
-        Returns a dict with all user fields (id, telegram_id, created_at, state, data), or None if user doesn't exist."""
+        Returns a dict with all user fields (id, telegram_id, created_at, state, data), or None if user doesn't exist.
+        """
         with sqlite3.connect(os.getenv("SQLITE_DATABASE_PATH")) as connection:
             with connection:
                 cursor = connection.execute(
-                    "SELECT id, telegram_id, created_at, state, data FROM users WHERE telegram_id = ?", (telegram_id,),
+                    "SELECT id, telegram_id, created_at, state, data FROM users WHERE telegram_id = ?",
+                    (telegram_id,),
                 )
                 result = cursor.fetchone()
                 if result:
                     return {
-                        'id': result[0],
-                        'telegram_id': result[1],
-                        'created_at': result[2],
-                        'state': result[3],
-                        'data': result[4]
+                        "id": result[0],
+                        "telegram_id": result[1],
+                        "created_at": result[2],
+                        "state": result[3],
+                        "data": result[4],
                     }
                 return None
 
@@ -91,10 +95,12 @@ class StorageSqlite(Storage):
         with sqlite3.connect(os.getenv("SQLITE_DATABASE_PATH")) as connection:
             with connection:
                 cursor = connection.execute(
-                    "SELECT 1 FROM users WHERE telegram_id = ?", (telegram_id,),
+                    "SELECT 1 FROM users WHERE telegram_id = ?",
+                    (telegram_id,),
                 )
 
                 if cursor.fetchone() is None:
                     connection.execute(
-                        "INSERT INTO users (telegram_id) VALUES (?)", (telegram_id,),
+                        "INSERT INTO users (telegram_id) VALUES (?)",
+                        (telegram_id,),
                     )

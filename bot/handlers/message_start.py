@@ -6,7 +6,14 @@ from bot.handlers.handler import Handler, HandlerStatus
 
 
 class MessageStart(Handler):
-    def can_handle(self, update: dict, state: str, order_json: dict, storage: Storage, messenger: Messenger) -> bool:
+    def can_handle(
+        self,
+        update: dict,
+        state: str,
+        order_json: dict,
+        storage: Storage,
+        messenger: Messenger,
+    ) -> bool:
         return (
             "message" in update
             and "text" in update["message"]
@@ -14,7 +21,12 @@ class MessageStart(Handler):
         )
 
     def handle(
-        self, update: dict, state: str, order_json: dict, storage: Storage, messenger: Messenger,
+        self,
+        update: dict,
+        state: str,
+        order_json: dict,
+        storage: Storage,
+        messenger: Messenger,
     ) -> HandlerStatus:
         telegram_id = update["message"]["from"]["id"]
 

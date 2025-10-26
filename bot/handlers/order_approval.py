@@ -6,7 +6,14 @@ from bot.handlers.handler import Handler, HandlerStatus
 
 
 class OrderApprovalHandler(Handler):
-    def can_handle(self, update: dict, state: str, order_json: dict, storage: Storage, messenger: Messenger) -> bool:
+    def can_handle(
+        self,
+        update: dict,
+        state: str,
+        order_json: dict,
+        storage: Storage,
+        messenger: Messenger,
+    ) -> bool:
         if "callback_query" not in update:
             return False
 
@@ -17,7 +24,12 @@ class OrderApprovalHandler(Handler):
         return callback_data in ["order_approve", "order_restart"]
 
     def handle(
-        self, update: dict, state: str, order_json: dict, storage: Storage, messenger: Messenger,
+        self,
+        update: dict,
+        state: str,
+        order_json: dict,
+        storage: Storage,
+        messenger: Messenger,
     ) -> HandlerStatus:
         telegram_id = update["callback_query"]["from"]["id"]
         callback_data = update["callback_query"]["data"]
