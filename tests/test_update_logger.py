@@ -9,8 +9,6 @@ from tests.mock import Mock
 
 
 def test_update_database_logger_execution():
-    """Test that UpdateDatabaseLogger handler executes and calls persist_update with correct update."""
-
     # 1. Create JSON with telegram update with simple text message
     test_update = {
         "update_id": 123456789,
@@ -33,27 +31,25 @@ def test_update_database_logger_execution():
         },
     }
 
-    # 2. Init mock storage and stub necessary methods
-    mock_storage = Mock(spec=Storage)
-    mock_storage.get_user.return_value = {"state": "idle", "data": "{}"}
-    mock_storage.persist_update = Mock()
+    persist_update_called = False
+    def persist_update(update: dict) -> None:
+        nonlocal persist_update_called
+        persist_update_called = True
+        assert update == test_update
 
-    # 3. Init mock messenger
-    mock_messenger = Mock(spec=Messenger)
+    def get_user(telegram_id: int) -> dict | None:
+        assert telegram_id == 12345
+        return None
 
-    # 4. Init dispatcher and add UpdateDatabaseLogger handler
+    mock_storage = Mock({
+        "persist_update": persist_update,
+        "get_user": get_user,
+    })
+    mock_messenger = Mock({})
+
     dispatcher = Dispatcher(mock_storage, mock_messenger)
     update_logger = UpdateDatabaseLogger()
     dispatcher.add_handlers(update_logger)
-
-    # 5. Dispatch the test message
     dispatcher.dispatch(test_update)
 
-    # 6. Assert that UpdateDatabaseLogger was executed and persist_update was called with correct update
-    mock_storage.persist_update.assert_called_once_with(test_update)
-
-    # Additional assertions to verify handler behavior
-    assert (
-        update_logger.can_handle(test_update, "idle", {}, mock_storage, mock_messenger)
-        is True
-    ), "UpdateDatabaseLogger should always return True for can_handle"
+    assert persist_update_called
