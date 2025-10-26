@@ -28,7 +28,7 @@ class Dispatcher:
 
         user_state = user.get("state") if user else None
 
-        user_data = user["data"] if user else "{}"
+        user_data = user["order_json"] if user else "{}"
         if user_data is None:
             user_data = "{}"
         order_data = json.loads(user_data)

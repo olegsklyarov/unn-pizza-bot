@@ -30,7 +30,7 @@ class MessageStart(Handler):
     ) -> HandlerStatus:
         telegram_id = update["message"]["from"]["id"]
 
-        storage.clear_user_data(telegram_id)
+        storage.clear_user_order_json(telegram_id)
         storage.update_user_state(telegram_id, "WAIT_FOR_PIZZA_NAME")
 
         messenger.send_message(

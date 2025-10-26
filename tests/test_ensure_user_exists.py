@@ -28,13 +28,10 @@ def test_ensure_user_exists_handler():
 
     ensure_user_exists_called = False
 
-
     def ensure_user_exists(telegram_id: int) -> None:
         assert telegram_id == 12345
         nonlocal ensure_user_exists_called
         ensure_user_exists_called = True
-
-
 
     def get_user(telegram_id: int) -> dict | None:
         assert telegram_id == 12345

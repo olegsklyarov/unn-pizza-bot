@@ -48,7 +48,7 @@ class PizzaDrinksHandler(Handler):
 
         order_json["drink"] = selected_drink
 
-        storage.update_user_data(telegram_id, order_json)
+        storage.update_user_order_json(telegram_id, order_json)
         storage.update_user_state(telegram_id, "WAIT_FOR_ORDER_APPROVE")
         messenger.answer_callback_query(update["callback_query"]["id"])
 

@@ -65,7 +65,7 @@ Send /start to place another order."""
             )
 
         elif callback_data == "order_restart":
-            storage.clear_user_data(telegram_id)
+            storage.clear_user_order_json(telegram_id)
 
             # Update user state to wait for pizza selection
             storage.update_user_state(telegram_id, "WAIT_FOR_PIZZA_NAME")
