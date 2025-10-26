@@ -1,10 +1,10 @@
 from bot.dispatcher import Dispatcher
-from bot.handlers.update_database_logger import UpdateDatabaseLogger
+from bot.handlers.ensure_user_exists import EnsureUserExists
 
 from tests.mock import Mock
 
 
-def test_update_database_logger_execution():
+def test_ensure_user_exists_handler():
     test_update = {
         "update_id": 123456789,
         "message": {
@@ -26,12 +26,15 @@ def test_update_database_logger_execution():
         },
     }
 
-    persist_update_called = False
+    ensure_user_exists_called = False
 
-    def persist_update(update: dict) -> None:
-        nonlocal persist_update_called
-        persist_update_called = True
-        assert update == test_update
+
+    def ensure_user_exists(telegram_id: int) -> None:
+        assert telegram_id == 12345
+        nonlocal ensure_user_exists_called
+        ensure_user_exists_called = True
+
+
 
     def get_user(telegram_id: int) -> dict | None:
         assert telegram_id == 12345
@@ -39,15 +42,14 @@ def test_update_database_logger_execution():
 
     mock_storage = Mock(
         {
-            "persist_update": persist_update,
+            "ensure_user_exists": ensure_user_exists,
             "get_user": get_user,
         }
     )
     mock_messenger = Mock({})
 
     dispatcher = Dispatcher(mock_storage, mock_messenger)
-    update_logger = UpdateDatabaseLogger()
-    dispatcher.add_handlers(update_logger)
+    dispatcher.add_handlers(EnsureUserExists())
     dispatcher.dispatch(test_update)
 
-    assert persist_update_called
+    assert ensure_user_exists_called
