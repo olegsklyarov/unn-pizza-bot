@@ -1,9 +1,5 @@
-from unittest.mock import Mock
-
 from bot.dispatcher import Dispatcher
 from bot.handlers.update_database_logger import UpdateDatabaseLogger
-from bot.domain.storage import Storage
-from bot.domain.messenger import Messenger
 
 from tests.mock import Mock
 
@@ -32,6 +28,7 @@ def test_update_database_logger_execution():
     }
 
     persist_update_called = False
+
     def persist_update(update: dict) -> None:
         nonlocal persist_update_called
         persist_update_called = True
@@ -41,10 +38,12 @@ def test_update_database_logger_execution():
         assert telegram_id == 12345
         return None
 
-    mock_storage = Mock({
-        "persist_update": persist_update,
-        "get_user": get_user,
-    })
+    mock_storage = Mock(
+        {
+            "persist_update": persist_update,
+            "get_user": get_user,
+        }
+    )
     mock_messenger = Mock({})
 
     dispatcher = Dispatcher(mock_storage, mock_messenger)
