@@ -1,16 +1,14 @@
-import bot.database_client
-
+from bot.domain.messenger import Messenger
+from bot.domain.storage import Storage
 from bot.handlers.handler import Handler, HandlerStatus
 
 
 class UpdateDatabaseLogger(Handler):
-    """
-    Должен быть добавлен первым обработчиком
-    """
-
-    def can_handle(self, update: dict, state: str, data: dict) -> bool:
+    def can_handle(self, update: dict, state: str, order_json: dict, storage: Storage, messenger: Messenger) -> bool:
         return True
 
-    def handle(self, update: dict, state: str, data: dict) -> HandlerStatus:
-        bot.database_client.persist_update(update)
+    def handle(
+        self, update: dict, state: str, order_json: dict, storage: Storage, messenger: Messenger,
+    ) -> HandlerStatus:
+        storage.persist_update(update)
         return HandlerStatus.CONTINUE
