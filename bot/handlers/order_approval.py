@@ -2,8 +2,7 @@ import json
 
 import bot.telegram_api_client
 from bot.database_client import clear_user_data, update_user_state
-from bot.handlers.handler import Handler
-from bot.handler_result import HandlerStatus
+from bot.handlers.handler import Handler, HandlerStatus
 
 
 class OrderApprovalHandler(Handler):

@@ -1,8 +1,7 @@
 import json
 
 from bot.database_client import get_user
-from bot.handlers.handler import Handler
-from bot.handler_result import HandlerStatus
+from bot.handlers.handler import Handler, HandlerStatus
 
 
 class Dispatcher:

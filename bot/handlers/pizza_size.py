@@ -2,8 +2,7 @@ import json
 
 import bot.telegram_api_client
 import bot.database_client
-from bot.handlers.handler import Handler
-from bot.handler_result import HandlerStatus
+from bot.handlers.handler import Handler, HandlerStatus
 
 
 class PizzaSizeHandler(Handler):
