@@ -1,7 +1,7 @@
 from bot.dispatcher import Dispatcher
 from bot.handlers.update_database_logger import UpdateDatabaseLogger
 
-from tests.mock import Mock
+from tests.mocks import Mock
 
 
 def test_update_database_logger_execution():

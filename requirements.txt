@@ -1,4 +1,4 @@
-black
-pytest
 python-dotenv
+black
 ruff
+pytest

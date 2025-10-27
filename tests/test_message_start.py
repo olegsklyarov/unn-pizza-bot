@@ -1,7 +1,7 @@
 from bot.dispatcher import Dispatcher
 from bot.handlers.message_start import MessageStart
 
-from tests.mock import Mock
+from tests.mocks import Mock
 
 
 def test_message_start_handler():
