@@ -1,6 +1,7 @@
 import json
 
 from bot.domain.messenger import Messenger
+from bot.domain.order_state import OrderState
 from bot.domain.storage import Storage
 from bot.handlers.handler import Handler, HandlerStatus
 
@@ -9,7 +10,7 @@ class PizzaSelectionHandler(Handler):
     def can_handle(
         self,
         update: dict,
-        state: str,
+        state: OrderState,
         order_json: dict,
         storage: Storage,
         messenger: Messenger,
@@ -17,7 +18,7 @@ class PizzaSelectionHandler(Handler):
         if "callback_query" not in update:
             return False
 
-        if state != "WAIT_FOR_PIZZA_NAME":
+        if state != OrderState.WAIT_FOR_PIZZA_NAME:
             return False
 
         callback_data = update["callback_query"]["data"]
@@ -26,7 +27,7 @@ class PizzaSelectionHandler(Handler):
     def handle(
         self,
         update: dict,
-        state: str,
+        state: OrderState,
         order_json: dict,
         storage: Storage,
         messenger: Messenger,
@@ -36,7 +37,7 @@ class PizzaSelectionHandler(Handler):
 
         pizza_name = callback_data.replace("pizza_", "").replace("_", " ").title()
         storage.update_user_order_json(telegram_id, {"pizza_name": pizza_name})
-        storage.update_user_state(telegram_id, "WAIT_FOR_PIZZA_SIZE")
+        storage.update_user_state(telegram_id, OrderState.WAIT_FOR_PIZZA_SIZE)
         messenger.answer_callback_query(update["callback_query"]["id"])
         messenger.delete_message(
             chat_id=update["callback_query"]["message"]["chat"]["id"],

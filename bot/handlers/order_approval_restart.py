@@ -6,7 +6,7 @@ from bot.domain.storage import Storage
 from bot.handlers.handler import Handler, HandlerStatus
 
 
-class PizzaSizeHandler(Handler):
+class OrderApprovalRestartHandler(Handler):
     def can_handle(
         self,
         update: dict,
@@ -18,11 +18,11 @@ class PizzaSizeHandler(Handler):
         if "callback_query" not in update:
             return False
 
-        if state != OrderState.WAIT_FOR_PIZZA_SIZE:
+        if state != OrderState.WAIT_FOR_ORDER_APPROVE:
             return False
 
         callback_data = update["callback_query"]["data"]
-        return callback_data.startswith("size_")
+        return callback_data == "order_restart"
 
     def handle(
         self,
@@ -33,56 +33,55 @@ class PizzaSizeHandler(Handler):
         messenger: Messenger,
     ) -> HandlerStatus:
         telegram_id = update["callback_query"]["from"]["id"]
-        callback_data = update["callback_query"]["data"]
-
-        size_mapping = {
-            "size_small": "Small (25cm)",
-            "size_medium": "Medium (30cm)",
-            "size_large": "Large (35cm)",
-            "size_xl": "Extra Large (40cm)",
-        }
-
-        pizza_size = size_mapping.get(callback_data)
-        order_json["pizza_size"] = pizza_size
-        storage.update_user_order_json(telegram_id, order_json)
-        storage.update_user_state(telegram_id, OrderState.WAIT_FOR_DRINKS)
 
         messenger.answer_callback_query(update["callback_query"]["id"])
-
         messenger.delete_message(
             chat_id=update["callback_query"]["message"]["chat"]["id"],
             message_id=update["callback_query"]["message"]["message_id"],
         )
 
+        storage.clear_user_order_json(telegram_id)
+
+        # Update user state to wait for pizza selection
+        storage.update_user_state(telegram_id, OrderState.WAIT_FOR_PIZZA_NAME)
+
+        # Send pizza selection message with inline keyboard
         messenger.send_message(
             chat_id=update["callback_query"]["message"]["chat"]["id"],
-            text="Please choose some drinks",
+            text="Please choose pizza type",
             reply_markup=json.dumps(
                 {
                     "inline_keyboard": [
                         [
-                            {"text": "Coca-Cola", "callback_data": "drink_coca_cola"},
-                            {"text": "Pepsi", "callback_data": "drink_pepsi"},
-                        ],
-                        [
                             {
-                                "text": "Orange Juice",
-                                "callback_data": "drink_orange_juice",
+                                "text": "Margherita",
+                                "callback_data": "pizza_margherita",
                             },
                             {
-                                "text": "Apple Juice",
-                                "callback_data": "drink_apple_juice",
+                                "text": "Pepperoni",
+                                "callback_data": "pizza_pepperoni",
                             },
                         ],
                         [
-                            {"text": "Water", "callback_data": "drink_water"},
-                            {"text": "Iced Tea", "callback_data": "drink_iced_tea"},
+                            {
+                                "text": "Quattro Stagioni",
+                                "callback_data": "pizza_quattro_stagioni",
+                            },
+                            {
+                                "text": "Capricciosa",
+                                "callback_data": "pizza_capricciosa",
+                            },
                         ],
                         [
-                            {"text": "No drinks", "callback_data": "drink_none"},
+                            {"text": "Diavola", "callback_data": "pizza_diavola"},
+                            {
+                                "text": "Prosciutto",
+                                "callback_data": "pizza_prosciutto",
+                            },
                         ],
                     ],
                 },
             ),
         )
+
         return HandlerStatus.STOP
