@@ -1,4 +1,5 @@
 from bot.dispatcher import Dispatcher
+from bot.domain.order_state import OrderState
 from bot.handlers.message_start import MessageStart
 
 from tests.mocks import Mock
@@ -35,9 +36,9 @@ def test_message_start_handler():
         nonlocal clear_user_data_called
         clear_user_data_called = True
 
-    def update_user_state(telegram_id: int, state: str) -> None:
+    def update_user_state(telegram_id: int, state: OrderState) -> None:
         assert telegram_id == 12345
-        assert state == "WAIT_FOR_PIZZA_NAME"
+        assert state == OrderState.WAIT_FOR_PIZZA_NAME
 
         nonlocal update_user_state_called
         update_user_state_called = True
