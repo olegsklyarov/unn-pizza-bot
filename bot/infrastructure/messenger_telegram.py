@@ -65,3 +65,29 @@ class MessengerTelegram(Messenger):
             chat_id=chat_id,
             message_id=message_id,
         )
+
+    def send_invoice(
+        self,
+        chat_id: int,
+        title: str,
+        description: str,
+        payload: str,
+        provider_token: str,
+        currency: str,
+        prices: list,
+        **kwargs,
+    ) -> dict:
+        """
+        https://core.telegram.org/bots/api#sendinvoice
+        """
+        return self._make_request(
+            "sendInvoice",
+            chat_id=chat_id,
+            title=title,
+            description=description,
+            payload=payload,
+            provider_token=provider_token,
+            currency=currency,
+            prices=prices,
+            **kwargs,
+        )
