@@ -1,6 +1,7 @@
 import json
 
 from bot.domain.messenger import Messenger
+from bot.domain.order_state import OrderState
 from bot.domain.storage import Storage
 from bot.handlers.handler import Handler, HandlerStatus
 
@@ -9,7 +10,7 @@ class PizzaSizeHandler(Handler):
     def can_handle(
         self,
         update: dict,
-        state: str,
+        state: OrderState,
         order_json: dict,
         storage: Storage,
         messenger: Messenger,
@@ -17,7 +18,7 @@ class PizzaSizeHandler(Handler):
         if "callback_query" not in update:
             return False
 
-        if state != "WAIT_FOR_PIZZA_SIZE":
+        if state != OrderState.WAIT_FOR_PIZZA_SIZE:
             return False
 
         callback_data = update["callback_query"]["data"]
@@ -26,7 +27,7 @@ class PizzaSizeHandler(Handler):
     def handle(
         self,
         update: dict,
-        state: str,
+        state: OrderState,
         order_json: dict,
         storage: Storage,
         messenger: Messenger,
@@ -44,7 +45,7 @@ class PizzaSizeHandler(Handler):
         pizza_size = size_mapping.get(callback_data)
         order_json["pizza_size"] = pizza_size
         storage.update_user_order_json(telegram_id, order_json)
-        storage.update_user_state(telegram_id, "WAIT_FOR_DRINKS")
+        storage.update_user_state(telegram_id, OrderState.WAIT_FOR_DRINKS)
 
         messenger.answer_callback_query(update["callback_query"]["id"])
 
