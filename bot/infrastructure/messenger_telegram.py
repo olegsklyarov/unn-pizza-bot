@@ -91,3 +91,16 @@ class MessengerTelegram(Messenger):
             prices=prices,
             **kwargs,
         )
+
+    def answer_pre_checkout_query(
+        self, pre_checkout_query_id: str, ok: bool, **kwargs
+    ) -> dict:
+        """
+        https://core.telegram.org/bots/api#answerprecheckoutquery
+        """
+        return self._make_request(
+            "answerPreCheckoutQuery",
+            pre_checkout_query_id=pre_checkout_query_id,
+            ok=ok,
+            **kwargs,
+        )
