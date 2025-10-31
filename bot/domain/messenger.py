@@ -26,3 +26,8 @@ class Messenger(ABC):
         prices: list,
         **kwargs,
     ) -> dict: ...
+
+    @abstractmethod
+    def answer_pre_checkout_query(
+        self, pre_checkout_query_id: str, ok: bool, **kwargs
+    ) -> dict: ...

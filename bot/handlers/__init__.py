@@ -6,6 +6,8 @@ from bot.handlers.order_approval_restart import OrderApprovalRestartHandler
 from bot.handlers.pizza_drinks import PizzaDrinksHandler
 from bot.handlers.pizza_selection import PizzaSelectionHandler
 from bot.handlers.pizza_size import PizzaSizeHandler
+from bot.handlers.pre_checkout_query import PreCheckoutQueryHandler
+from bot.handlers.successful_payment import SuccessfulPaymentHandler
 from bot.handlers.update_database_logger import UpdateDatabaseLogger
 
 
@@ -19,4 +21,6 @@ def get_handlers() -> list[Handler]:
         PizzaDrinksHandler(),
         OrderApprovalApprovedHandler(),
         OrderApprovalRestartHandler(),
+        PreCheckoutQueryHandler(),
+        SuccessfulPaymentHandler(),
     ]
