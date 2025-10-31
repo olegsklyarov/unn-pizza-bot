@@ -21,3 +21,6 @@
 
 ## Ссылки
 https://core.telegram.org/bots/payments
+
+Тестовые банковские карты
+https://yookassa.ru/developers/payment-acceptance/testing-and-going-live/testing#test-bank-card
