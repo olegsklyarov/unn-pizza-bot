@@ -45,6 +45,8 @@ class OrderApprovalApprovedHandler(Handler):
             message_id=update["callback_query"]["message"]["message_id"],
         )
 
+        storage.update_user_state(telegram_id, OrderState.WAIT_FOR_PAYMENT)
+
         pizza_name = order_json.get("pizza_name", "Unknown")
         pizza_size = order_json.get("pizza_size", "Unknown")
         drink = order_json.get("drink", "Unknown")
