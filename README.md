@@ -20,6 +20,8 @@ $ psql  -U postgres -h localhost -p 5432
 \x - enable extended display
 ```
 
+https://hub.docker.com/_/python
+
 # Настройка YooKassa (тестовые платежи)
 
 Инструкция: https://yookassa.ru/docs/support/payments/onboarding/integration/cms-module/telegram
