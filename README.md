@@ -1,10 +1,19 @@
 # Postgres
 
+https://hub.docker.com/_/postgres
+
+
+https://www.postgresql.org/docs/current/app-pg-isready.html
+```bash
+(docker) $ pg_isready -U postgres
+```
+
 https://www.postgresql.org/docs/current/app-psql.html
 
 ```bash
 $ psql  -U postgres -h localhost -p 5432
 (REPL)
+\q - quit
 \l - list of all databases
 \c pizza_bot - connect to pizza_bot database
 \dt - list tables in database
