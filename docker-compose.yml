@@ -1,7 +1,7 @@
 services:
   postgres:
     image: postgres:17
-    container_name: pizza_bot_postgres
+    container_name: storage_postgres
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -16,11 +16,11 @@ services:
       timeout: 5s
       retries: 5
 
-  bot:
+  telegram_bot:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: pizza_bot
+    container_name: telegram_bot
     environment:
       POSTGRES_HOST: postgres
       POSTGRES_PORT: 5432
