@@ -1,3 +1,16 @@
+# Postgres
+
+https://www.postgresql.org/docs/current/app-psql.html
+
+```bash
+$ psql  -U postgres -h localhost -p 5432
+(REPL)
+\l - list of all databases
+\c pizza_bot - connect to pizza_bot database
+\dt - list tables in database
+\x - enable extended display
+```
+
 # Настройка YooKassa (тестовые платежи)
 
 Инструкция: https://yookassa.ru/docs/support/payments/onboarding/integration/cms-module/telegram
