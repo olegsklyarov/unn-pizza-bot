@@ -1,4 +1,3 @@
-
 from bot.dispatcher import Dispatcher
 from bot.domain.messenger import Messenger
 
