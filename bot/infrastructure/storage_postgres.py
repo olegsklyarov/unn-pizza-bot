@@ -75,7 +75,7 @@ class StoragePostgres(Storage):
                     CREATE TABLE IF NOT EXISTS users
                     (
                         id SERIAL PRIMARY KEY,
-                        telegram_id INTEGER NOT NULL UNIQUE,
+                        telegram_id BIGINT NOT NULL UNIQUE,
                         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                         state TEXT DEFAULT NULL,
                         order_json TEXT DEFAULT NULL
