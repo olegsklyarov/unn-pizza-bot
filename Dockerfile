@@ -17,4 +17,4 @@ COPY bot/ ./bot/
 ENV PATH="/app/venv/bin:$PATH"
 
 # Run the bot
-CMD ["python", "-m", "bot"]
+CMD python -m bot.recreate_database_postgres && python -m bot

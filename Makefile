@@ -36,7 +36,7 @@ pytest: $(VENV_DIR)
 test: black ruff pytest
 
 docker_postgres_volume_create:
-	docker volume create $(POSTGRES_VOLUME)
+	docker volume create $(POSTGRES_VOLUME) || true
 
 docker_network_create:
 	docker network create $(DOCKER_NETWORK) || true
