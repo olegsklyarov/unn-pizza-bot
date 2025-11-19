@@ -75,7 +75,7 @@ build:
 push:
 	docker push $(BOT_IMAGE)
 
-run: docker_volume
+run: docker_net
 	docker run -d \
 	  --name $(BOT_CONTAINER) \
 	  --restart unless-stopped \
