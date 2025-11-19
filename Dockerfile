@@ -2,19 +2,20 @@ FROM python:3.13-slim
 
 WORKDIR /app
 
-# Copy requirements file
+# Copy requirements and entrypoint (change less frequently)
 COPY requirements.txt .
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 # Create virtual environment and install dependencies
 RUN python -m venv /app/venv && \
     /app/venv/bin/pip install --upgrade pip && \
     /app/venv/bin/pip install --no-cache-dir -r requirements.txt
 
-# Copy application code
-COPY bot/ ./bot/
-
 # Use virtual environment's Python
 ENV PATH="/app/venv/bin:$PATH"
 
-# Run the bot
-CMD python -m bot.recreate_database_postgres && python -m bot
+# Copy application code (changes most frequently)
+COPY bot/ ./bot/
+
+ENTRYPOINT ["/entrypoint.sh"]
