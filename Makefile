@@ -31,22 +31,22 @@ test: black ruff pytest
 DOCKER_NETWORK=pizza_bot_network
 
 POSTGRES_VOLUME=postgres_data
-POSTGRES_CONTAINER=postgres_database
+POSTGRES_CONTAINER=postgres_17
 
-TELEGRAM_BOT_IMAGE=olegsklyarov/unn_pizza_bot
-TELEGRAM_BOT_CONTAINER=telegram_pizza_bot
+BOT_IMAGE=olegsklyarov/unn_pizza_bot
+BOT_CONTAINER=telegram_pizza_bot
 
 # Автоматически загружаем переменные из .env
 include .env
 export $(shell sed 's/=.*//' .env)
 
-postgres_volume_create:
+docker_volume:
 	docker volume create $(POSTGRES_VOLUME) || true
 
-docker_network_create:
+docker_net:
 	docker network create $(DOCKER_NETWORK) || true
 
-postgres_run: postgres_volume_create docker_network_create
+postgres_run: docker_volume docker_net
 	docker run -d \
 	  --name $(POSTGRES_CONTAINER) \
 	  -e POSTGRES_USER="$(POSTGRES_USER)" \
@@ -65,19 +65,19 @@ postgres_stop:
 	docker stop $(POSTGRES_CONTAINER)
 	docker rm $(POSTGRES_CONTAINER)
 
-telegram_bot_build:
+build:
 	docker build \
-	  -t $(TELEGRAM_BOT_IMAGE) \
+	  -t $(BOT_IMAGE) \
 	  --platform linux/amd64,linux/arm64 \
 	  -f Dockerfile \
 	  .
 
-telegram_bot_push:
-	docker push $(TELEGRAM_BOT_IMAGE)
+push:
+	docker push $(BOT_IMAGE)
 
-telegram_bot_run: postgres_volume_create
+run: docker_volume
 	docker run -d \
-	  --name $(TELEGRAM_BOT_CONTAINER) \
+	  --name $(BOT_CONTAINER) \
 	  --restart unless-stopped \
 	  -e POSTGRES_HOST="$(POSTGRES_CONTAINER)" \
 	  -e POSTGRES_PORT="5432" \
@@ -87,8 +87,8 @@ telegram_bot_run: postgres_volume_create
 	  -e TELEGRAM_TOKEN="$(TELEGRAM_TOKEN)" \
 	  -e YOOKASSA_TOKEN="$(YOOKASSA_TOKEN)" \
 	  --network $(DOCKER_NETWORK) \
-	  $(TELEGRAM_BOT_IMAGE)
+	  $(BOT_IMAGE)
 
-telegram_bot_stop:
-	docker stop $(TELEGRAM_BOT_CONTAINER)
-	docker rm $(TELEGRAM_BOT_CONTAINER)
+stop:
+	docker stop $(BOT_CONTAINER)
+	docker rm $(BOT_CONTAINER)
