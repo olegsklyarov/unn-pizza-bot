@@ -34,7 +34,7 @@ POSTGRES_VOLUME=postgres_data
 POSTGRES_CONTAINER=postgres_17
 
 BOT_IMAGE=olegsklyarov/unn_pizza_bot
-BOT_CONTAINER=telegram_pizza_bot
+BOT_CONTAINER=pizza_bot
 
 # Автоматически загружаем переменные из .env
 include .env
