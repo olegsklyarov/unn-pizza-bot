@@ -179,7 +179,9 @@ class StoragePostgres(Storage):
 
     async def clear_user_order_json(self, telegram_id: int) -> None:
         method_name = "clear_user_order_json"
-        sql_query = "UPDATE users SET state = NULL, order_json = NULL WHERE telegram_id = $1"
+        sql_query = (
+            "UPDATE users SET state = NULL, order_json = NULL WHERE telegram_id = $1"
+        )
         start_time = time.time()
 
         logger.info(f"[DB] → {method_name} - {sql_query}")

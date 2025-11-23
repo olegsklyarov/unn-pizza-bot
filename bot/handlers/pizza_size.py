@@ -66,7 +66,10 @@ class PizzaSizeHandler(Handler):
                     {
                         "inline_keyboard": [
                             [
-                                {"text": "Coca-Cola", "callback_data": "drink_coca_cola"},
+                                {
+                                    "text": "Coca-Cola",
+                                    "callback_data": "drink_coca_cola",
+                                },
                                 {"text": "Pepsi", "callback_data": "drink_pepsi"},
                             ],
                             [

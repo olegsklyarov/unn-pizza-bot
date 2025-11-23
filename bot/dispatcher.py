@@ -69,8 +69,12 @@ class Dispatcher:
                         break
 
             duration_ms = (time.time() - start_time) * 1000
-            logger.info(f"[DISPATCH {update_id}] ← dispatch finished - {duration_ms:.2f}ms\n")
+            logger.info(
+                f"[DISPATCH {update_id}] ← dispatch finished - {duration_ms:.2f}ms\n"
+            )
         except Exception as e:
             duration_ms = (time.time() - start_time) * 1000
-            logger.error(f"[DISPATCH {update_id}] ✗ dispatch failed - {duration_ms:.2f}ms - Error: {e}\n")
+            logger.error(
+                f"[DISPATCH {update_id}] ✗ dispatch failed - {duration_ms:.2f}ms - Error: {e}\n"
+            )
             raise

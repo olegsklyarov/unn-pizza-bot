@@ -59,11 +59,17 @@ class PizzaSelectionHandler(Handler):
                         "inline_keyboard": [
                             [
                                 {"text": "Small (25cm)", "callback_data": "size_small"},
-                                {"text": "Medium (30cm)", "callback_data": "size_medium"},
+                                {
+                                    "text": "Medium (30cm)",
+                                    "callback_data": "size_medium",
+                                },
                             ],
                             [
                                 {"text": "Large (35cm)", "callback_data": "size_large"},
-                                {"text": "Extra Large (40cm)", "callback_data": "size_xl"},
+                                {
+                                    "text": "Extra Large (40cm)",
+                                    "callback_data": "size_xl",
+                                },
                             ],
                         ],
                     },

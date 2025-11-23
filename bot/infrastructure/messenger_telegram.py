@@ -1,4 +1,3 @@
-import json
 import logging
 import os
 import time
@@ -68,7 +67,9 @@ class MessengerTelegram(Messenger):
         """
         https://core.telegram.org/bots/api#sendmessage
         """
-        return await self._make_request("sendMessage", chat_id=chat_id, text=text, **kwargs)
+        return await self._make_request(
+            "sendMessage", chat_id=chat_id, text=text, **kwargs
+        )
 
     async def get_updates(self, **kwargs) -> list:
         """
