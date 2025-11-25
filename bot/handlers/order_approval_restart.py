@@ -1,3 +1,4 @@
+import asyncio
 import json
 
 from bot.domain.messenger import Messenger
@@ -24,7 +25,7 @@ class OrderApprovalRestartHandler(Handler):
         callback_data = update["callback_query"]["data"]
         return callback_data == "order_restart"
 
-    def handle(
+    async def handle(
         self,
         update: dict,
         state: OrderState,
@@ -33,20 +34,20 @@ class OrderApprovalRestartHandler(Handler):
         messenger: Messenger,
     ) -> HandlerStatus:
         telegram_id = update["callback_query"]["from"]["id"]
+        chat_id = update["callback_query"]["message"]["chat"]["id"]
+        message_id = update["callback_query"]["message"]["message_id"]
+        callback_query_id = update["callback_query"]["id"]
 
-        messenger.answer_callback_query(update["callback_query"]["id"])
-        messenger.delete_message(
-            chat_id=update["callback_query"]["message"]["chat"]["id"],
-            message_id=update["callback_query"]["message"]["message_id"],
+        # Выполнить answer_callback_query, delete_message и обновления БД параллельно
+        await asyncio.gather(
+            messenger.answer_callback_query(callback_query_id),
+            messenger.delete_message(chat_id=chat_id, message_id=message_id),
+            storage.clear_user_order_json(telegram_id),
+            storage.update_user_state(telegram_id, OrderState.WAIT_FOR_PIZZA_NAME),
         )
 
-        storage.clear_user_order_json(telegram_id)
-
-        # Update user state to wait for pizza selection
-        storage.update_user_state(telegram_id, OrderState.WAIT_FOR_PIZZA_NAME)
-
         # Send pizza selection message with inline keyboard
-        messenger.send_message(
+        await messenger.send_message(
             chat_id=update["callback_query"]["message"]["chat"]["id"],
             text="Please choose pizza type",
             reply_markup=json.dumps(
