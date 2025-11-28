@@ -52,7 +52,7 @@ postgres_run: docker_volume docker_net
 	  -e POSTGRES_USER="$(POSTGRES_USER)" \
 	  -e POSTGRES_PASSWORD="$(POSTGRES_PASSWORD)" \
 	  -e POSTGRES_DB="$(POSTGRES_DATABASE)" \
-	  -p "$(POSTGRES_HOST_PORT):$(POSTGRES_CONTAINER_PORT)" \
+	  -p "$(POSTGRES_PORT_HOST):$(POSTGRES_PORT_CONTAINER)" \
 	  -v $(POSTGRES_VOLUME):/var/lib/postgresql/data \
 	  --health-cmd="pg_isready -U $(POSTGRES_USER)" \
 	  --health-interval=10s \
@@ -80,7 +80,7 @@ run: docker_net
 	  --name $(BOT_CONTAINER) \
 	  --restart unless-stopped \
 	  -e POSTGRES_HOST="$(POSTGRES_CONTAINER)" \
-	  -e POSTGRES_PORT="5432" \
+	  -e POSTGRES_PORT="$(POSTGRES_PORT_CONTAINER)" \
 	  -e POSTGRES_USER="$(POSTGRES_USER)" \
 	  -e POSTGRES_PASSWORD="$(POSTGRES_PASSWORD)" \
 	  -e POSTGRES_DATABASE="$(POSTGRES_DATABASE)" \
