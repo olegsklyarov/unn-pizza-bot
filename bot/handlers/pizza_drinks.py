@@ -52,7 +52,6 @@ async def pizza_drinks_handler(
 
 Is everything correct?"""
 
-    # Создаем inline клавиатуру для подтверждения заказа
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
             [
