@@ -6,7 +6,6 @@ import time
 import asyncpg
 from dotenv import load_dotenv
 
-from bot.domain.order_state import OrderState
 from bot.domain.storage import Storage
 
 load_dotenv()
@@ -81,7 +80,6 @@ class StoragePostgres(Storage):
             logger.error(f"[DB] ✗ {method_name} - {duration_ms:.2f}ms - Error: {e}")
             raise
 
-    async def update_user_order_json(self, telegram_id: int, order_json: dict) -> None:
         method_name = "update_user_order_json"
         sql_query = "UPDATE users SET order_json = $1 WHERE telegram_id = $2"
         start_time = time.time()
@@ -135,86 +133,6 @@ class StoragePostgres(Storage):
                         order_json TEXT DEFAULT NULL
                     )
                     """
-                )
-
-            duration_ms = (time.time() - start_time) * 1000
-            logger.info(f"[DB] ← {method_name} - {duration_ms:.2f}ms")
-        except Exception as e:
-            duration_ms = (time.time() - start_time) * 1000
-            logger.error(f"[DB] ✗ {method_name} - {duration_ms:.2f}ms - Error: {e}")
-            raise
-
-    async def get_user(self, telegram_id: int) -> dict | None:
-        method_name = "get_user"
-        sql_query = "SELECT id, telegram_id, created_at, state, order_json FROM users WHERE telegram_id = $1"
-        start_time = time.time()
-
-        logger.info(f"[DB] → {method_name} - {sql_query}")
-
-        try:
-            pool = await self._get_pool()
-            async with pool.acquire() as conn:
-                result = await conn.fetchrow(
-                    "SELECT id, telegram_id, created_at, state, order_json FROM users WHERE telegram_id = $1",
-                    telegram_id,
-                )
-                if result:
-                    user_data = {
-                        "id": result["id"],
-                        "telegram_id": result["telegram_id"],
-                        "created_at": result["created_at"],
-                        "state": result["state"],
-                        "order_json": result["order_json"],
-                    }
-                    duration_ms = (time.time() - start_time) * 1000
-                    logger.info(f"[DB] ← {method_name} - {duration_ms:.2f}ms")
-                    return user_data
-                duration_ms = (time.time() - start_time) * 1000
-                logger.info(f"[DB] ← {method_name} - {duration_ms:.2f}ms (no result)")
-                return None
-        except Exception as e:
-            duration_ms = (time.time() - start_time) * 1000
-            logger.error(f"[DB] ✗ {method_name} - {duration_ms:.2f}ms - Error: {e}")
-            raise
-
-    async def clear_user_order_json(self, telegram_id: int) -> None:
-        method_name = "clear_user_order_json"
-        sql_query = (
-            "UPDATE users SET state = NULL, order_json = NULL WHERE telegram_id = $1"
-        )
-        start_time = time.time()
-
-        logger.info(f"[DB] → {method_name} - {sql_query}")
-
-        try:
-            pool = await self._get_pool()
-            async with pool.acquire() as conn:
-                await conn.execute(
-                    "UPDATE users SET state = NULL, order_json = NULL WHERE telegram_id = $1",
-                    telegram_id,
-                )
-
-            duration_ms = (time.time() - start_time) * 1000
-            logger.info(f"[DB] ← {method_name} - {duration_ms:.2f}ms")
-        except Exception as e:
-            duration_ms = (time.time() - start_time) * 1000
-            logger.error(f"[DB] ✗ {method_name} - {duration_ms:.2f}ms - Error: {e}")
-            raise
-
-    async def update_user_state(self, telegram_id: int, state: OrderState) -> None:
-        method_name = "update_user_state"
-        sql_query = "UPDATE users SET state = $1 WHERE telegram_id = $2"
-        start_time = time.time()
-
-        logger.info(f"[DB] → {method_name} - {sql_query}")
-
-        try:
-            pool = await self._get_pool()
-            async with pool.acquire() as conn:
-                await conn.execute(
-                    "UPDATE users SET state = $1 WHERE telegram_id = $2",
-                    state,
-                    telegram_id,
                 )
 
             duration_ms = (time.time() - start_time) * 1000

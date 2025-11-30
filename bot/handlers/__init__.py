@@ -8,12 +8,11 @@ from bot.handlers import (
     order_approval_approved,
     order_approval_restart,
     pre_checkout_query,
-    # successful_payment,
+    successful_payment,
 )
 
 
 def get_handlers() -> list[Router]:
-    """Возвращает список роутеров для регистрации в dispatcher."""
     return [
         message_start.router,
         pizza_selection.router,
@@ -22,5 +21,5 @@ def get_handlers() -> list[Router]:
         order_approval_approved.router,
         order_approval_restart.router,
         pre_checkout_query.router,
-        # successful_payment.router,
+        successful_payment.router,
     ]
