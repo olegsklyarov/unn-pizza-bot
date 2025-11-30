@@ -80,28 +80,6 @@ class StoragePostgres(Storage):
             logger.error(f"[DB] ✗ {method_name} - {duration_ms:.2f}ms - Error: {e}")
             raise
 
-        method_name = "update_user_order_json"
-        sql_query = "UPDATE users SET order_json = $1 WHERE telegram_id = $2"
-        start_time = time.time()
-
-        logger.info(f"[DB] → {method_name} - {sql_query}")
-
-        try:
-            pool = await self._get_pool()
-            async with pool.acquire() as conn:
-                await conn.execute(
-                    "UPDATE users SET order_json = $1 WHERE telegram_id = $2",
-                    json.dumps(order_json, ensure_ascii=False, indent=2),
-                    telegram_id,
-                )
-
-            duration_ms = (time.time() - start_time) * 1000
-            logger.info(f"[DB] ← {method_name} - {duration_ms:.2f}ms")
-        except Exception as e:
-            duration_ms = (time.time() - start_time) * 1000
-            logger.error(f"[DB] ✗ {method_name} - {duration_ms:.2f}ms - Error: {e}")
-            raise
-
     async def recreate_database(self) -> None:
         method_name = "recreate_database"
         start_time = time.time()

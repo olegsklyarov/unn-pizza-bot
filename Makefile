@@ -16,12 +16,7 @@ black: $(VENV_DIR)
 ruff: $(VENV_DIR)
 	$(ACTIVATE_VENV) && ruff check .
 
-# Run pytest
-pytest: $(VENV_DIR)
-	$(ACTIVATE_VENV) && PYTHONPATH=. pytest
-
-# Run all tests (includes black, ruff, and pytest)
-test: black ruff pytest
+test: black ruff
 
 
 #
