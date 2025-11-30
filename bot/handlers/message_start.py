@@ -1,83 +1,60 @@
 import asyncio
-import json
 
-from bot.domain.messenger import Messenger
-from bot.domain.order_state import OrderState
-from bot.domain.storage import Storage
-from bot.handlers.handler import Handler, HandlerStatus
+from aiogram import Bot, Router
+from aiogram.filters import Command
+from aiogram.fsm.context import FSMContext
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
+
+from bot.domain.fsm import Order
+
+router = Router()
 
 
-class MessageStart(Handler):
-    def can_handle(
-        self,
-        update: dict,
-        state: OrderState,
-        order_json: dict,
-        storage: Storage,
-        messenger: Messenger,
-    ) -> bool:
-        return (
-            "message" in update
-            and "text" in update["message"]
-            and update["message"]["text"] == "/start"
-        )
-
-    async def handle(
-        self,
-        update: dict,
-        state: OrderState,
-        order_json: dict,
-        storage: Storage,
-        messenger: Messenger,
-    ) -> HandlerStatus:
-        telegram_id = update["message"]["from"]["id"]
-
-        await storage.clear_user_order_json(telegram_id)
-        await storage.update_user_state(telegram_id, OrderState.WAIT_FOR_PIZZA_NAME)
-
-        # Выполнить два send_message параллельно
-        await asyncio.gather(
-            messenger.send_message(
-                chat_id=update["message"]["chat"]["id"],
-                text="🍕 Welcome to Pizza shop!",
-                reply_markup=json.dumps({"remove_keyboard": True}),
-            ),
-            messenger.send_message(
-                chat_id=update["message"]["chat"]["id"],
-                text="Please choose pizza type",
-                reply_markup=json.dumps(
-                    {
-                        "inline_keyboard": [
-                            [
-                                {
-                                    "text": "Margherita",
-                                    "callback_data": "pizza_margherita",
-                                },
-                                {
-                                    "text": "Pepperoni",
-                                    "callback_data": "pizza_pepperoni",
-                                },
-                            ],
-                            [
-                                {
-                                    "text": "Quattro Stagioni",
-                                    "callback_data": "pizza_quattro_stagioni",
-                                },
-                                {
-                                    "text": "Capricciosa",
-                                    "callback_data": "pizza_capricciosa",
-                                },
-                            ],
-                            [
-                                {"text": "Diavola", "callback_data": "pizza_diavola"},
-                                {
-                                    "text": "Prosciutto",
-                                    "callback_data": "pizza_prosciutto",
-                                },
-                            ],
-                        ],
-                    },
+@router.message(Command("start"))
+async def message_start(
+    message: Message,
+    bot: Bot,
+    state: FSMContext,
+) -> None:
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text="Margherita", callback_data="pizza_margherita"
                 ),
-            ),
-        )
-        return HandlerStatus.STOP
+                InlineKeyboardButton(text="Pepperoni", callback_data="pizza_pepperoni"),
+            ],
+            [
+                InlineKeyboardButton(
+                    text="Quattro Stagioni", callback_data="pizza_quattro_stagioni"
+                ),
+                InlineKeyboardButton(
+                    text="Capricciosa", callback_data="pizza_capricciosa"
+                ),
+            ],
+            [
+                InlineKeyboardButton(text="Diavola", callback_data="pizza_diavola"),
+                InlineKeyboardButton(
+                    text="Prosciutto", callback_data="pizza_prosciutto"
+                ),
+            ],
+        ]
+    )
+
+    await asyncio.gather(
+        state.clear(),
+        bot.send_message(
+            chat_id=message.chat.id,
+            text="🍕 Welcome to Pizza shop!",
+            reply_markup=None,
+        ),
+    )
+
+    await asyncio.gather(
+        state.set_state(Order.wait_for_pizza_name),
+        bot.send_message(
+            chat_id=message.chat.id,
+            text="Please choose pizza type",
+            reply_markup=keyboard,
+        ),
+    )

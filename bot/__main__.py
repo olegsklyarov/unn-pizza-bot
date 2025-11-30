@@ -1,30 +1,36 @@
 import asyncio
+import os
 
-import bot.long_polling
-from bot.dispatcher import Dispatcher
-from bot.domain.messenger import Messenger
+from aiogram import Bot, Dispatcher
+from aiogram.fsm.storage.memory import MemoryStorage
+from dotenv import load_dotenv
+
 from bot.domain.storage import Storage
 from bot.handlers import get_handlers
-from bot.infrastructure.messenger_telegram import MessengerTelegram
 from bot.infrastructure.storage_postgres import StoragePostgres
+
+load_dotenv()
 
 
 async def main() -> None:
     storage: Storage = StoragePostgres()
-    messenger: Messenger = MessengerTelegram()
 
-    try:
-        dispatcher = Dispatcher(storage, messenger)
-        dispatcher.add_handlers(*get_handlers())
-        await bot.long_polling.start_long_polling(dispatcher, messenger)
-    except KeyboardInterrupt:
-        print("\nBye!")
-    finally:
-        # Закрыть соединения при завершении
-        if hasattr(messenger, "close"):
-            await messenger.close()
-        if hasattr(storage, "close"):
-            await storage.close()
+    async with Bot(token=os.getenv("TELEGRAM_TOKEN")) as bot:
+        dp = Dispatcher(storage=MemoryStorage())
+
+        # dp.update.outer_middleware(UpdateDatabaseLoggerMiddleware(storage))
+        # dp.update.middleware(StorageMiddleware(storage))
+        # dp.update.middleware(UserStateMiddleware(storage))
+
+        dp.include_routers(*get_handlers())
+
+        try:
+            await dp.start_polling(bot)
+        except KeyboardInterrupt:
+            print("\nBye!")
+        finally:
+            if hasattr(storage, "close"):
+                await storage.close()
 
 
 if __name__ == "__main__":

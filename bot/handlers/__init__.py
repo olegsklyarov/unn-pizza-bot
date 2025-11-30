@@ -1,26 +1,26 @@
-from bot.handlers.handler import Handler
-from bot.handlers.ensure_user_exists import EnsureUserExists
-from bot.handlers.message_start import MessageStart
-from bot.handlers.order_approval_approved import OrderApprovalApprovedHandler
-from bot.handlers.order_approval_restart import OrderApprovalRestartHandler
-from bot.handlers.pizza_drinks import PizzaDrinksHandler
-from bot.handlers.pizza_selection import PizzaSelectionHandler
-from bot.handlers.pizza_size import PizzaSizeHandler
-from bot.handlers.pre_checkout_query import PreCheckoutQueryHandler
-from bot.handlers.successful_payment import SuccessfulPaymentHandler
-from bot.handlers.update_database_logger import UpdateDatabaseLogger
+from aiogram import Router
+
+from bot.handlers import (
+    message_start,
+    pizza_selection,
+    pizza_size,
+    # order_approval_approved,
+    # order_approval_restart,
+    # pizza_drinks,
+    # pre_checkout_query,
+    # successful_payment,
+)
 
 
-def get_handlers() -> list[Handler]:
+def get_handlers() -> list[Router]:
+    """Возвращает список роутеров для регистрации в dispatcher."""
     return [
-        UpdateDatabaseLogger(),
-        EnsureUserExists(),
-        MessageStart(),
-        PizzaSelectionHandler(),
-        PizzaSizeHandler(),
-        PizzaDrinksHandler(),
-        OrderApprovalApprovedHandler(),
-        OrderApprovalRestartHandler(),
-        PreCheckoutQueryHandler(),
-        SuccessfulPaymentHandler(),
+        message_start.router,
+        pizza_selection.router,
+        pizza_size.router,
+        # pizza_drinks.router,
+        # order_approval_approved.router,
+        # order_approval_restart.router,
+        # pre_checkout_query.router,
+        # successful_payment.router,
     ]
