@@ -106,9 +106,7 @@ class StoragePostgres(Storage):
                     (
                         id SERIAL PRIMARY KEY,
                         telegram_id BIGINT NOT NULL UNIQUE,
-                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                        state TEXT DEFAULT NULL,
-                        order_json TEXT DEFAULT NULL
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                     )
                     """
                 )

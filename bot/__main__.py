@@ -8,7 +8,9 @@ from dotenv import load_dotenv
 from bot.domain.storage import Storage
 from bot.handlers import get_handlers
 from bot.infrastructure.storage_postgres import StoragePostgres
-from bot.middlewares.persist_update_and_ensure_user_exists import PersistUpdateAndEnsureUserExistsMiddleware
+from bot.middlewares.persist_update_and_ensure_user_exists import (
+    PersistUpdateAndEnsureUserExistsMiddleware,
+)
 
 load_dotenv()
 
