@@ -2,7 +2,7 @@ import asyncio
 import os
 
 from aiogram import Bot, Dispatcher
-from aiogram.fsm.storage.memory import MemoryStorage
+from aiogram.fsm.storage.redis import RedisStorage
 from dotenv import load_dotenv
 
 from bot.domain.storage import Storage
@@ -17,9 +17,10 @@ load_dotenv()
 
 async def main() -> None:
     storage: Storage = StoragePostgres()
+    redis_storage = RedisStorage.from_url(os.getenv("REDIS_URL"))
 
     async with Bot(token=os.getenv("TELEGRAM_TOKEN")) as bot:
-        dp = Dispatcher(storage=MemoryStorage())
+        dp = Dispatcher(storage=redis_storage)
         dp.update.outer_middleware(PersistUpdateAndEnsureUserExistsMiddleware(storage))
         dp.include_routers(*get_handlers())
 
@@ -28,6 +29,7 @@ async def main() -> None:
         except KeyboardInterrupt:
             print("\nBye!")
         finally:
+            await redis_storage.close()
             if hasattr(storage, "close"):
                 await storage.close()
 

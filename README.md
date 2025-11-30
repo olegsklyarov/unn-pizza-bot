@@ -1,3 +1,20 @@
+# Redis
+
+https://hub.docker.com/_/redis
+
+https://redis.io/docs/latest/develop/tools/cli/
+```bash
+(host) $ echo "KEYS *" | redis-cli
+# вывести FSM состояние
+(host) $ echo "GET fsm:8284137968:8284137968:state" | redis-cli
+
+# вывести FSM заказ (aka JSON order)
+(host) $ echo "GET fsm:8284137968:8284137968:data" | redis-cli | jq
+
+# следить за заказом в режиме online
+(host) $ watch 'echo "GET fsm:8284137968:8284137968:data" | redis-cli | jq'
+```
+
 # Postgres
 
 https://hub.docker.com/_/postgres

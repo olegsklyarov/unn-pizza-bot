@@ -6,3 +6,4 @@ pytest-asyncio
 aiohttp
 asyncpg
 aiogram
+redis
