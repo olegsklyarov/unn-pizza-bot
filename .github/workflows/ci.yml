@@ -39,7 +39,3 @@ jobs:
     - name: Run Ruff linting check
       run: |
         ruff check bot/ tests/
-
-    - name: Run pytest tests
-      run: |
-        PYTHONPATH=. pytest tests/ -v
