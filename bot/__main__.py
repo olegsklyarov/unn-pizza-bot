@@ -1,30 +1,19 @@
 import asyncio
+import os
 
-import bot.long_polling
-from bot.dispatcher import Dispatcher
-from bot.domain.messenger import Messenger
-from bot.domain.storage import Storage
-from bot.handlers import get_handlers
-from bot.infrastructure.messenger_telegram import MessengerTelegram
-from bot.infrastructure.storage_postgres import StoragePostgres
+from aiogram import Bot, Dispatcher
+import dotenv
+
+
+dotenv.load_dotenv()
+
+
+dp = Dispatcher()
 
 
 async def main() -> None:
-    storage: Storage = StoragePostgres()
-    messenger: Messenger = MessengerTelegram()
-
-    try:
-        dispatcher = Dispatcher(storage, messenger)
-        dispatcher.add_handlers(*get_handlers())
-        await bot.long_polling.start_long_polling(dispatcher, messenger)
-    except KeyboardInterrupt:
-        print("\nBye!")
-    finally:
-        # Закрыть соединения при завершении
-        if hasattr(messenger, "close"):
-            await messenger.close()
-        if hasattr(storage, "close"):
-            await storage.close()
+    bot = Bot(token=os.getenv("TELEGRAM_TOKEN"))
+    await dp.start_polling(bot)
 
 
 if __name__ == "__main__":
