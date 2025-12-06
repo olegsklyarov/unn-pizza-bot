@@ -1,3 +1,87 @@
+# Aiogram
+
+План
+- Введение: зачем, какую проблему решает?
+- 
+
+## Что такое Aiogram?
+
+Aiogram — высокоуровневая асинхронная Python-библиотека для разработки Telegram-ботов.
+
+Основана на:
+- asyncio
+- строгой типизации (pydantic)
+- удобной декларативной маршрутизации (Handlers + Filters)
+- встроенном FSM
+
+Отличие от вашего “ручного” подхода:
+- Обёртка над всех HTTP запросами → не пишем вручную getUpdates/sendMessage.
+- Маршрутизация событий → фильтрация и разбор Update (свой Dispatcher + Handlers)
+- Свой State менеджмент (FSM)
+- Свой Long Polling
+- Расширяемость за счёт middleware, роутеров, кастомных фильтров.
+
+Ценность:
+- Вы уже умеете писать всё вручную.
+- Aiogram убирает рутину → скорость разработки ×5–×10.
+- Подходит для продакшена: стабильность, сообщество, тонкая настройка.
+
+## Long polling в aiogram
+
+```python
+await dp.start_polling(bot)
+```
+
+внутри:
+- делает цикл getUpdates
+- отдаёт апдейты в Dispatcher
+- обрабатывает исключения
+- соблюдает rate limits
+
+Фактически — ваш собственный long polling → но спрятан за 3 строками.
+
+🔥 aiogram снимает необходимость думать про `offset`, `timeout`.
+
+## Фильтрация updates: аналогия с их dispatcher/handlers
+
+- Aiogram сам определяет тип Update.
+- Внутри работает цепочка фильтров (как if-условия поверх ваших Handlers).
+- Гибкие фильтры: набор готовый плюс кастомные
+- Каждый @dp.message() = подписка Observer, но уже **декларативно**.
+
+## Dependancy Injection
+https://docs.aiogram.dev/en/v3.22.0/dispatcher/dependency_injection.html
+
+follow SOLID’s principles:
+- dependency inversion
+- single responsibility 
+
+Реализует встроенный в aiogram Dispatcher - смотрим на примерах
+
+## Middleware
+https://docs.aiogram.dev/en/v3.22.0/dispatcher/middlewares.html
+
+- Outer scope - before processing filters (<router>.<event>.outer_middleware(...))
+- Inner scope - after processing filters but before handler (<router>.<event>.middleware(...))
+
+🔥 Удобно для логирование всех входящих запросов
+
+Не забываем про параметр `allowed_updates` в getUpdates
+https://core.telegram.org/bots/api#getupdates
+
+aiogram по умолчанию сам собирает список событий и формирует `allowed_updates` исходя из текущего набора handler'ов. Если нужно логировать вообще всех входящие, то вручную определяем `allowed_updates`!
+
+## FSM в aiogram — управление состояниями
+https://docs.aiogram.dev/en/v3.22.0/dispatcher/finite_state_machine/index.html
+
+Aiogram предоставляет встроенную конечную автоматную модель:
+- набор состояний
+- автоматическое хранение состояний в памяти или Redis
+- привязка handler к конкретному состоянию
+- Каждое состояние — чёткий этап диалога.
+- Aiogram сам обеспечивает маршрутизацию по состояниям.
+- Небольшое количество кода позволяет строить сложные многошаговые диалоги.
+
 # Postgres
 
 https://hub.docker.com/_/postgres
