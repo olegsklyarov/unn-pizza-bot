@@ -18,6 +18,12 @@ async def message_text_echo_handler(message: Message) -> None:
     await message.answer(message.text)
 
 
+@dp.message(F.photo)
+async def message_photo_echo_handler(message: Message) -> None:
+    await message.answer_photo(message.photo[-1].file_id)
+    # await message.send_copy(chat_id=message.chat.id)
+
+
 async def main() -> None:
     bot = Bot(token=os.getenv("TELEGRAM_TOKEN"))
     await dp.start_polling(bot)
